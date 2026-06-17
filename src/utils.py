@@ -75,3 +75,46 @@ def load_user_settings(settings_path: str = "user_settings.json") -> Dict[str, A
         return {"user_currencies": ["USD", "EUR"], "user_stocks": []}
     except json.JSONDecodeError:
         return {"user_currencies": ["USD", "EUR"], "user_stocks": []}
+
+def get_currency_rates(currencies: list) -> list:
+    """
+    Получает курсы валют к рублю через API.
+    """
+    rates = []
+    for currency in currencies:
+        try:
+            url = f"https://api.exchangerate-api.com/v4/latest/{currency}"
+            response = requests.get(url, timeout=5)
+            response.raise_for_status()
+            data = response.json()
+            rate = data.get('rates', {}).get('RUB')
+            if rate and rate > 0:
+                rates.append({"currency": currency, "rate": round(rate, 2)})
+            else:
+                logger.warning(f"Не удалось получить курс для {currency}")
+        except Exception as e:
+            logger.error(f"Ошибка получения курса {currency}: {e}")
+            continue
+    return rates
+
+def get_stock_prices(stocks: list, api_key: str = "demo") -> list:
+    """
+    Получает текущие цены акций через Alpha Vantage API.
+    """
+    prices = []
+    for stock in stocks:
+        try:
+            url = f"https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol={stock}&apikey={api_key}"
+            response = requests.get(url, timeout=5)
+            response.raise_for_status()
+            data = response.json()
+            quote = data.get('Global Quote', {})
+            price = quote.get('05. price')
+            if price:
+                prices.append({"stock": stock, "price": round(float(price), 2)})
+            else:
+                logger.warning(f"Не удалось получить цену для {stock}")
+        except Exception as e:
+            logger.error(f"Ошибка получения цены акции {stock}: {e}")
+            continue
+    return prices
