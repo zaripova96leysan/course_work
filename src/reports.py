@@ -6,29 +6,23 @@ from typing import Optional
 
 
 def save_to_file(filename: Optional[str] = None):
-    """Декоратор: сохраняет результат функции в JSON-файл."""
-
     def decorator(func):
         @wraps(func)
         def wrapper(*args, **kwargs):
             result = func(*args, **kwargs)
-            # Определяем имя файла
             if filename is None:
                 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
                 out_name = f"report_{func.__name__}_{timestamp}.json"
             else:
                 out_name = filename
-            # Сохраняем результат
             with open(out_name, 'w', encoding='utf-8') as f:
                 if isinstance(result, pd.DataFrame):
                     data = result.to_dict(orient='records')
                 else:
                     data = result
-                json.dump(data, f, ensure_ascii=False, indent=2)
+                json.dump(data, f, ensure_ascii=False, indent=2, default=str)
             return result
-
         return wrapper
-
     return decorator
 
 
