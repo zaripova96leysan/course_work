@@ -4,6 +4,7 @@ from src.utils import get_greeting, get_data_time, get_card_with_spend
 import pandas as pd
 
 def test_get_greeting():
+    from src.utils import get_greeting
     assert get_greeting(datetime(2021, 12, 20, 8, 0, 0)) == "Доброе утро"
     assert get_greeting(datetime(2021, 12, 20, 14, 0, 0)) == "Добрый день"
     assert get_greeting(datetime(2021, 12, 20, 20, 0, 0)) == "Добрый вечер"
