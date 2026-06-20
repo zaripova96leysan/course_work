@@ -33,10 +33,17 @@ def main_info(date_time: str) -> str:
     else:
         top_transactions = []
 
+    settings = load_user_settings("user_settings.json")
+    user_currencies = settings.get("user_currencies", ["USD", "EUR"])
+    user_stocks = settings.get("user_stocks", ["AAPL", "GOOGL"])
 
 
-    currency_rates = []
-    stock_prices = []
+    currency_rates = get_currency_rates(user_currencies)
+
+
+    stock_prices = get_stock_prices(user_stocks, api_key="demo")
+
+
 
     data = {
         "greeting": greeting,
