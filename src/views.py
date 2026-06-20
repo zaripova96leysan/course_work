@@ -41,7 +41,7 @@ def main_info(date_time: str) -> str:
     currency_rates = get_currency_rates(user_currencies)
 
 
-    stock_prices = get_stock_prices(user_stocks, api_key="demo")
+    stock_prices = get_stock_prices(user_stocks)
 
 
 
